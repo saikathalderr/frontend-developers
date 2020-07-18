@@ -12,13 +12,8 @@
             />
           </div>
           <div class="col-xs-12 col-md-5 data">
-            <breadcrumbs
-              class="pt40 pb20 hidden-xs"
-            />
-            <h1
-              class="mb20 mt0 cl-mine-shaft product-name"
-              data-testid="productName"
-            >
+            <breadcrumbs class="pt40 pb20 hidden-xs" />
+            <h1 class="mb20 mt0 cl-mine-shaft product-name" data-testid="productName">
               {{ getCurrentProduct.name | htmlDecode }}
               <web-share
                 :title="getCurrentProduct.name | htmlDecode"
@@ -49,9 +44,7 @@
                 <div class="h5" v-for="option in getProductOptions" :key="option.id">
                   <div class="variants-label" data-testid="variantsLabel">
                     {{ option.label }}
-                    <span
-                      class="weight-700"
-                    >{{ getOptionLabel(option) }}</span>
+                    <span class="weight-700">{{ getOptionLabel(option) }}</span>
                   </div>
                   <div class="row top-xs m0 pt15 pb40 variants-wrapper">
                     <div v-if="option.label == 'Color'">
@@ -184,45 +177,58 @@
 </template>
 
 <script>
-import i18n from '@vue-storefront/i18n'
-import VueOfflineMixin from 'vue-offline/mixin'
-import config from 'config'
-import RelatedProducts from 'theme/components/core/blocks/Product/Related.vue'
-import Reviews from 'theme/components/core/blocks/Reviews/Reviews.vue'
-import AddToCart from 'theme/components/core/AddToCart.vue'
-import GenericSelector from 'theme/components/core/GenericSelector'
-import ColorSelector from 'theme/components/core/ColorSelector.vue'
-import SizeSelector from 'theme/components/core/SizeSelector.vue'
-import Breadcrumbs from 'theme/components/core/Breadcrumbs.vue'
-import ProductAttribute from 'theme/components/core/ProductAttribute.vue'
-import ProductQuantity from 'theme/components/core/ProductQuantity.vue'
-import ProductLinks from 'theme/components/core/ProductLinks.vue'
-import ProductCustomOptions from 'theme/components/core/ProductCustomOptions.vue'
-import ProductBundleOptions from 'theme/components/core/ProductBundleOptions.vue'
-import ProductGallery from 'theme/components/core/ProductGallery'
-import Spinner from 'theme/components/core/Spinner'
-import PromotedOffers from 'theme/components/theme/blocks/PromotedOffers/PromotedOffers'
-import focusClean from 'theme/components/theme/directives/focusClean'
-import WebShare from 'theme/components/theme/WebShare'
-import BaseInputNumber from 'theme/components/core/blocks/Form/BaseInputNumber'
-import SizeGuide from 'theme/components/core/blocks/Product/SizeGuide'
-import AddToWishlist from 'theme/components/core/blocks/Wishlist/AddToWishlist'
-import AddToCompare from 'theme/components/core/blocks/Compare/AddToCompare'
-import { mapGetters } from 'vuex'
-import LazyHydrate from 'vue-lazy-hydration'
-import { ProductOption } from '@vue-storefront/core/modules/catalog/components/ProductOption.ts'
-import { getAvailableFiltersByProduct, getSelectedFiltersByProduct } from '@vue-storefront/core/modules/catalog/helpers/filters'
-import { isOptionAvailableAsync } from '@vue-storefront/core/modules/catalog/helpers/index'
-import { localizedRoute, currentStoreView } from '@vue-storefront/core/lib/multistore'
-import { htmlDecode } from '@vue-storefront/core/filters'
-import { ReviewModule } from '@vue-storefront/core/modules/review'
-import { RecentlyViewedModule } from '@vue-storefront/core/modules/recently-viewed'
-import { registerModule, isModuleRegistered } from '@vue-storefront/core/lib/modules'
-import { onlineHelper, isServer, productJsonLd } from '@vue-storefront/core/helpers'
-import { catalogHooksExecutors } from '@vue-storefront/core/modules/catalog-next/hooks'
-import ProductPrice from 'theme/components/core/ProductPrice.vue'
-import { doPlatformPricesSync } from '@vue-storefront/core/modules/catalog/helpers'
-import { filterChangedProduct } from '@vue-storefront/core/modules/catalog/events'
+import i18n from '@vue-storefront/i18n';
+import VueOfflineMixin from 'vue-offline/mixin';
+import config from 'config';
+import RelatedProducts from 'theme/components/core/blocks/Product/Related.vue';
+import Reviews from 'theme/components/core/blocks/Reviews/Reviews.vue';
+import AddToCart from 'theme/components/core/AddToCart.vue';
+import GenericSelector from 'theme/components/core/GenericSelector';
+import ColorSelector from 'theme/components/core/ColorSelector.vue';
+import SizeSelector from 'theme/components/core/SizeSelector.vue';
+import Breadcrumbs from 'theme/components/core/Breadcrumbs.vue';
+import ProductAttribute from 'theme/components/core/ProductAttribute.vue';
+import ProductQuantity from 'theme/components/core/ProductQuantity.vue';
+import ProductLinks from 'theme/components/core/ProductLinks.vue';
+import ProductCustomOptions from 'theme/components/core/ProductCustomOptions.vue';
+import ProductBundleOptions from 'theme/components/core/ProductBundleOptions.vue';
+import ProductGallery from 'theme/components/core/ProductGallery';
+import Spinner from 'theme/components/core/Spinner';
+import PromotedOffers from 'theme/components/theme/blocks/PromotedOffers/PromotedOffers';
+import focusClean from 'theme/components/theme/directives/focusClean';
+import WebShare from 'theme/components/theme/WebShare';
+import BaseInputNumber from 'theme/components/core/blocks/Form/BaseInputNumber';
+import SizeGuide from 'theme/components/core/blocks/Product/SizeGuide';
+import AddToWishlist from 'theme/components/core/blocks/Wishlist/AddToWishlist';
+import AddToCompare from 'theme/components/core/blocks/Compare/AddToCompare';
+import { mapGetters } from 'vuex';
+import LazyHydrate from 'vue-lazy-hydration';
+import { ProductOption } from '@vue-storefront/core/modules/catalog/components/ProductOption.ts';
+import {
+  getAvailableFiltersByProduct,
+  getSelectedFiltersByProduct
+} from '@vue-storefront/core/modules/catalog/helpers/filters';
+import { isOptionAvailableAsync } from '@vue-storefront/core/modules/catalog/helpers/index';
+import {
+  localizedRoute,
+  currentStoreView
+} from '@vue-storefront/core/lib/multistore';
+import { htmlDecode } from '@vue-storefront/core/filters';
+import { ReviewModule } from '@vue-storefront/core/modules/review';
+import { RecentlyViewedModule } from '@vue-storefront/core/modules/recently-viewed';
+import {
+  registerModule,
+  isModuleRegistered
+} from '@vue-storefront/core/lib/modules';
+import {
+  onlineHelper,
+  isServer,
+  productJsonLd
+} from '@vue-storefront/core/helpers';
+import { catalogHooksExecutors } from '@vue-storefront/core/modules/catalog-next/hooks';
+import ProductPrice from 'theme/components/core/ProductPrice.vue';
+import { doPlatformPricesSync } from '@vue-storefront/core/modules/catalog/helpers';
+import { filterChangedProduct } from '@vue-storefront/core/modules/catalog/events';
 
 export default {
   components: {
@@ -250,8 +256,8 @@ export default {
   mixins: [ProductOption],
   directives: { focusClean },
   beforeCreate () {
-    registerModule(ReviewModule)
-    registerModule(RecentlyViewedModule)
+    registerModule(ReviewModule);
+    registerModule(RecentlyViewedModule);
   },
   data () {
     return {
@@ -261,7 +267,7 @@ export default {
       isStockInfoLoading: false,
       hasAttributesLoaded: false,
       manageQuantity: true
-    }
+    };
   },
   computed: {
     ...mapGetters({
@@ -273,13 +279,17 @@ export default {
       getCurrentCustomOptions: 'product/getCurrentCustomOptions'
     }),
     getOptionLabel () {
-      return (option) => {
-        const configName = option.attribute_code ? option.attribute_code : option.label.toLowerCase()
-        return this.getCurrentProductConfiguration[configName] ? this.getCurrentProductConfiguration[configName].label : configName
-      }
+      return option => {
+        const configName = option.attribute_code
+          ? option.attribute_code
+          : option.label.toLowerCase();
+        return this.getCurrentProductConfiguration[configName]
+          ? this.getCurrentProductConfiguration[configName].label
+          : configName;
+      };
     },
     isOnline (value) {
-      return onlineHelper.isOnline
+      return onlineHelper.isOnline;
     },
     getProductOptions () {
       if (
@@ -287,79 +297,126 @@ export default {
         Object.keys(this.getCurrentProduct.errors).length &&
         Object.keys(this.getCurrentProductConfiguration).length
       ) {
-        return []
+        return [];
       }
-      return this.getCurrentProduct.configurable_options
+      return this.getCurrentProduct.configurable_options;
     },
     getOfflineImage () {
       return {
-        src: this.getThumbnail(this.getCurrentProduct.image, config.products.thumbnails.width, config.products.thumbnails.height),
-        error: this.getThumbnail(this.getCurrentProduct.image, config.products.thumbnails.width, config.products.thumbnails.height),
-        loading: this.getThumbnail(this.getCurrentProduct.image, config.products.thumbnails.width, config.products.thumbnails.height)
-      }
+        src: this.getThumbnail(
+          this.getCurrentProduct.image,
+          config.products.thumbnails.width,
+          config.products.thumbnails.height
+        ),
+        error: this.getThumbnail(
+          this.getCurrentProduct.image,
+          config.products.thumbnails.width,
+          config.products.thumbnails.height
+        ),
+        loading: this.getThumbnail(
+          this.getCurrentProduct.image,
+          config.products.thumbnails.width,
+          config.products.thumbnails.height
+        )
+      };
     },
     getCustomAttributes () {
       return Object.values(this.attributesByCode || [])
         .filter(
-          a => a.is_visible && a.is_user_defined && (parseInt(a.is_visible_on_front) || a.is_visible_on_front === true) && this.getCurrentProduct[a.attribute_code]
+          a =>
+            a.is_visible &&
+            a.is_user_defined &&
+            (parseInt(a.is_visible_on_front) ||
+              a.is_visible_on_front === true) &&
+            this.getCurrentProduct[a.attribute_code]
         )
-        .sort((a, b) => { return a.attribute_id > b.attribute_id })
+        .sort((a, b) => {
+          return a.attribute_id > b.attribute_id;
+        });
     },
     getAvailableFilters () {
-      return getAvailableFiltersByProduct(this.getCurrentProduct)
+      return getAvailableFiltersByProduct(this.getCurrentProduct);
     },
     getSelectedFilters () {
-      return getSelectedFiltersByProduct(this.getCurrentProduct, this.getCurrentProductConfiguration)
+      return getSelectedFiltersByProduct(
+        this.getCurrentProduct,
+        this.getCurrentProductConfiguration
+      );
     },
     isSimpleOrConfigurable () {
-      return ['simple', 'configurable'].includes(this.getCurrentProduct.type_id)
+      return ['simple', 'configurable'].includes(
+        this.getCurrentProduct.type_id
+      );
     },
     isAddToCartDisabled () {
       if (this.quantityError || this.isStockInfoLoading) {
-        return false
+        return false;
       }
 
-      return this.isOnline && !this.maxQuantity && this.manageQuantity && this.isSimpleOrConfigurable
+      return (
+        this.isOnline &&
+        !this.maxQuantity &&
+        this.manageQuantity &&
+        this.isSimpleOrConfigurable
+      );
     },
     storeView () {
-      return currentStoreView()
+      return currentStoreView();
     },
     getJsonLd () {
-      return productJsonLd(this.getCurrentProduct, this.getCurrentProductConfiguration.color && this.getCurrentProductConfiguration.color.label, this.$store.state.storeView.i18n.currencyCode, this.getCustomAttributes)
+      return productJsonLd(
+        this.getCurrentProduct,
+        this.getCurrentProductConfiguration.color &&
+          this.getCurrentProductConfiguration.color.label,
+        this.$store.state.storeView.i18n.currencyCode,
+        this.getCustomAttributes
+      );
     }
   },
   async mounted () {
-    await this.$store.dispatch('recently-viewed/addItem', this.getCurrentProduct)
+    await this.$store.dispatch(
+      'recently-viewed/addItem',
+      this.getCurrentProduct
+    );
   },
   async asyncData ({ store, route, context }) {
-    if (context) context.output.cacheTags.add('product')
-    const product = await store.dispatch('product/loadProduct', { parentSku: route.params.parentSku, childSku: route && route.params && route.params.childSku ? route.params.childSku : null })
-    const loadBreadcrumbsPromise = store.dispatch('product/loadProductBreadcrumbs', { product })
-    if (isServer) await loadBreadcrumbsPromise
-    catalogHooksExecutors.productPageVisited(product)
+    if (context) context.output.cacheTags.add('product');
+    const product = await store.dispatch('product/loadProduct', {
+      parentSku: route.params.parentSku,
+      childSku:
+        route && route.params && route.params.childSku
+          ? route.params.childSku
+          : null
+    });
+    const loadBreadcrumbsPromise = store.dispatch(
+      'product/loadProductBreadcrumbs',
+      { product }
+    );
+    if (isServer) await loadBreadcrumbsPromise;
+    catalogHooksExecutors.productPageVisited(product);
   },
   beforeRouteEnter (to, from, next) {
     if (isServer) {
-      next()
+      next();
     } else {
-      next((vm) => {
-        vm.getQuantity()
-      })
+      next(vm => {
+        vm.getQuantity();
+      });
     }
   },
   watch: {
     isOnline: {
       handler (isOnline) {
         if (isOnline) {
-          this.getQuantity()
+          this.getQuantity();
         }
       }
     }
   },
   methods: {
     showDetails (event) {
-      this.detailsOpen = true
-      event.target.classList.add('hidden')
+      this.detailsOpen = true;
+      event.target.classList.add('hidden');
     },
     notifyOutStock () {
       this.$store.dispatch('notification/spawnNotification', {
@@ -368,7 +425,7 @@ export default {
           'The product is out of stock and cannot be added to the cart!'
         ),
         action1: { label: this.$t('OK') }
-      })
+      });
     },
     notifyWrongAttributes () {
       this.$store.dispatch('notification/spawnNotification', {
@@ -377,24 +434,38 @@ export default {
           'No such configuration for the product. Please do choose another combination of attributes.'
         ),
         action1: { label: this.$t('OK') }
-      })
+      });
     },
     async changeFilter (variant) {
-      const selectedConfiguration = Object.assign({ attribute_code: variant.type }, variant)
-      await filterChangedProduct(selectedConfiguration, this.$store, this.$router)
-      this.getQuantity()
+      const selectedConfiguration = Object.assign(
+        { attribute_code: variant.type },
+        variant
+      );
+      await filterChangedProduct(
+        selectedConfiguration,
+        this.$store,
+        this.$router
+      );
+      this.getQuantity();
     },
     openSizeGuide () {
-      this.$bus.$emit('modal-show', 'modal-sizeguide')
+      this.$bus.$emit('modal-show', 'modal-sizeguide');
     },
-    isOptionAvailable (option) { // check if the option is available
-      const currentConfig = Object.assign({}, this.getCurrentProductConfiguration)
-      currentConfig[option.type] = option
-      return isOptionAvailableAsync(this.$store, { product: this.getCurrentProduct, configuration: currentConfig })
+    isOptionAvailable (option) {
+      // check if the option is available
+      const currentConfig = Object.assign(
+        {},
+        this.getCurrentProductConfiguration
+      );
+      currentConfig[option.type] = option;
+      return isOptionAvailableAsync(this.$store, {
+        product: this.getCurrentProduct,
+        configuration: currentConfig
+      });
     },
     async getQuantity () {
-      if (this.isStockInfoLoading) return // stock info is already loading
-      this.isStockInfoLoading = true
+      if (this.isStockInfoLoading) return; // stock info is already loading
+      this.isStockInfoLoading = true;
       try {
         if (config.products.alwaysSyncPricesClientSide) {
           doPlatformPricesSync([this.getCurrentProduct]);
@@ -402,20 +473,20 @@ export default {
         const res = await this.$store.dispatch('stock/check', {
           product: this.getCurrentProduct,
           qty: this.getCurrentProduct.qty
-        })
+        });
 
-        this.manageQuantity = res.isManageStock
-        this.maxQuantity = res.isManageStock ? res.qty : null
+        this.manageQuantity = res.isManageStock;
+        this.maxQuantity = res.isManageStock ? res.qty : null;
       } finally {
-        this.isStockInfoLoading = false
+        this.isStockInfoLoading = false;
       }
     },
     handleQuantityError (error) {
-      this.quantityError = error
+      this.quantityError = error;
     }
   },
   metaInfo () {
-    const storeView = currentStoreView()
+    const storeView = currentStoreView();
     return {
       /* link: [
         { rel: 'amphtml',
@@ -429,16 +500,26 @@ export default {
           }, storeView.storeCode)).href
         }
       ], */
-      title: htmlDecode(this.getCurrentProduct.meta_title || this.getCurrentProduct.name),
-      meta: this.getCurrentProduct.meta_description ? [{ vmid: 'description', name: 'description', content: htmlDecode(this.getCurrentProduct.meta_description) }] : []
-    }
+      title: htmlDecode(
+        this.getCurrentProduct.meta_title || this.getCurrentProduct.name
+      ),
+      meta: this.getCurrentProduct.meta_description
+        ? [
+          {
+            vmid: 'description',
+            name: 'description',
+            content: htmlDecode(this.getCurrentProduct.meta_description)
+          }
+        ]
+        : []
+    };
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>
-@import '~theme/css/variables/colors';
-@import '~theme/css/helpers/functions/color';
+@import "~theme/css/variables/colors";
+@import "~theme/css/helpers/functions/color";
 $color-primary: color(primary);
 $color-tertiary: color(tertiary);
 $color-secondary: color(secondary);

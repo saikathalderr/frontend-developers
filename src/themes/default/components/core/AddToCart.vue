@@ -1,19 +1,29 @@
 <template>
-  <button-full @click.native="addToCart(product)" :disabled="isProductDisabled" data-testid="addToCart">
-    {{ $t('Add to cart') }}
+  <button-full
+    @click.native="addToCart(product)"
+    :disabled="isProductDisabled"
+    data-testid="addToCart"
+  >
+    <!-- changed the text of the Add to Cart button to Added -->
+    <span v-if="!isAddingToCart && !isAdded">{{ $t('Add to cart') }}</span>
+    <span v-if="!isAddingToCart && isAdded">{{ $t('Added') }}</span>
+    <!-- Add a spinner in the Add to Cart button [Challenge 1]-->
+    <Spinner v-if="isAddingToCart" />
   </button-full>
 </template>
 
 <script>
-import { formatProductMessages } from '@vue-storefront/core/filters/product-messages'
-import { notifications } from '@vue-storefront/core/modules/cart/helpers'
-import focusClean from 'theme/components/theme/directives/focusClean'
-import ButtonFull from 'theme/components/theme/ButtonFull.vue'
-import { mapGetters } from 'vuex'
+import { formatProductMessages } from '@vue-storefront/core/filters/product-messages';
+import { notifications } from '@vue-storefront/core/modules/cart/helpers';
+import focusClean from 'theme/components/theme/directives/focusClean';
+import ButtonFull from 'theme/components/theme/ButtonFull.vue';
+import Spinner from './Spinner';
+import { mapGetters, mapActions } from 'vuex';
+// import { log } from 'util';
 
 export default {
   directives: { focusClean },
-  components: { ButtonFull },
+  components: { ButtonFull, Spinner },
   props: {
     product: {
       required: true,
@@ -24,22 +34,37 @@ export default {
       default: false
     }
   },
+  data: () => ({
+    isAdded: false
+  }),
   methods: {
+    ...mapActions('ui', ['toggleMicrocart']),
     onAfterRemovedVariant () {
-      this.$forceUpdate()
+      this.$forceUpdate();
     },
     async addToCart (product) {
       try {
-        const diffLog = await this.$store.dispatch('cart/addItem', { productToAdd: product })
+        const diffLog = await this.$store.dispatch('cart/addItem', {
+          productToAdd: product
+        });
         diffLog.clientNotifications.forEach(notificationData => {
-          this.notifyUser(notificationData)
-        })
+          // Removed the Green Notification [Challenge 1]
+          // this.notifyUser(notificationData);
+
+          this.isAdded = true;
+          // open the Cart [Challenge 1]
+          this.toggleMicrocart();
+        });
       } catch (message) {
-        this.notifyUser(notifications.createNotification({ type: 'error', message }))
+        this.notifyUser(
+          notifications.createNotification({ type: 'error', message })
+        );
       }
     },
     notifyUser (notificationData) {
-      this.$store.dispatch('notification/spawnNotification', notificationData, { root: true })
+      this.$store.dispatch('notification/spawnNotification', notificationData, {
+        root: true
+      });
     }
   },
   computed: {
@@ -47,14 +72,18 @@ export default {
       isAddingToCart: 'cart/getIsAdding'
     }),
     isProductDisabled () {
-      return this.disabled || formatProductMessages(this.product.errors) !== '' || this.isAddingToCart
+      return (
+        this.disabled ||
+        formatProductMessages(this.product.errors) !== '' ||
+        this.isAddingToCart
+      );
     }
   },
   beforeMount () {
-    this.$bus.$on('product-after-removevariant', this.onAfterRemovedVariant)
+    this.$bus.$on('product-after-removevariant', this.onAfterRemovedVariant);
   },
   beforeDestroy () {
-    this.$bus.$off('product-after-removevariant')
+    this.$bus.$off('product-after-removevariant');
   }
-}
+};
 </script>
