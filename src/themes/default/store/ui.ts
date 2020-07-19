@@ -16,6 +16,11 @@ export const uiStore = {
       path: []
     }
   },
+  getters: {
+    getSidebarStatus (state) {
+      return state.sidebar
+    }
+  },
   mutations: {
     setCheckoutMode (state, action) {
       state.checkoutMode = action === true

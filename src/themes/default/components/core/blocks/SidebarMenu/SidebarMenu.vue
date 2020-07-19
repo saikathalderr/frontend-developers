@@ -8,13 +8,23 @@
         <sub-btn type="back" class="bg-cl-transparent brdr-none" />
       </div>
       <div class="col-xs bg-cl-primary">
-        <button
+        <!-- <button
           type="button"
           :aria-label="$t('Close')"
           class="w-100 inline-flex end-xs bg-cl-transparent brdr-none p0 close-btn"
-          @click="closeMenu"
+          @click="closeSideMenu"
         >
           <i class="material-icons p15">close</i>
+        </button> -->
+        <button
+          type="button"
+          class="menu"
+          @click="closeSideMenu"
+          :aria-label="$t('Close')"
+        >
+          <div :class="!closing ? 'active-menu' :'menu-line'" />
+          <div :class="!closing ? 'active-menu' :'menu-line'" />
+          <div :class="!closing ? 'active-menu' :'menu-line'" />
         </button>
       </div>
     </div>
@@ -22,7 +32,7 @@
       <div class="col-xs-12 h4 serif">
         <ul class="p0 m0 relative sidebar-menu__list" :style="mainListStyles">
           <li
-            @click="closeMenu"
+            @click="closeSideMenu"
             class="brdr-bottom-1 brdr-cl-bg-secondary bg-cl-primary"
           >
             <router-link
@@ -36,7 +46,7 @@
           <li
             class="brdr-bottom-1 brdr-cl-bg-secondary bg-cl-primary flex"
             :key="category.slug"
-            @click="closeMenu"
+            @click="closeSideMenu"
             v-for="category in visibleCategories"
           >
             <div
@@ -67,7 +77,7 @@
           </li>
           <li
             v-if="isCurrentMenuShowed"
-            @click="closeMenu"
+            @click="closeSideMenu"
             class="bg-cl-secondary"
           >
             <router-link
@@ -80,7 +90,7 @@
           </li>
           <li
             v-if="isCurrentMenuShowed"
-            @click="closeMenu"
+            @click="closeSideMenu"
             class="bg-cl-secondary"
           >
             <router-link
@@ -93,7 +103,7 @@
           </li>
           <li
             v-if="compareIsActive && isCurrentMenuShowed"
-            @click="closeMenu"
+            @click="closeSideMenu"
             class="bg-cl-secondary"
           >
             <router-link
@@ -119,12 +129,12 @@
               v-if="currentUser"
               :my-account-links="myAccountLinks"
               id="my-account-links"
-              @click.native="closeMenu"
+              @click.native="closeSideMenu"
             />
             <a
               v-if="!currentUser && isCurrentMenuShowed"
               href="#"
-              @click.prevent="closeMenu"
+              @click.prevent="closeSideMenu"
               class="block w-100 px25 py20 cl-accent no-underline fs-medium-small"
             >
               {{ $t('My account') }}
@@ -153,6 +163,7 @@ export default {
   mixins: [SidebarMenu],
   data () {
     return {
+      closing: false,
       myAccountLinks: [
         {
           id: 1,
@@ -194,7 +205,9 @@ export default {
     },
     ...mapState({
       submenu: state => state.ui.submenu,
-      currentUser: state => state.user.current
+      currentUser: state => state.user.current,
+      isOpen: state => state.ui.sidebar
+
     }),
     getSubmenu () {
       return this.submenu
@@ -218,6 +231,12 @@ export default {
     clearAllBodyScrollLocks()
   },
   methods: {
+    closeSideMenu () {
+      this.closing = true
+      setTimeout(() => {
+        this.closeMenu()
+      }, 200);
+    },
     login () {
       if (!this.currentUser && this.isCurrentMenuShowed) {
         this.$nextTick(() => {
@@ -229,6 +248,13 @@ export default {
     },
     categoryLink (category) {
       return formatCategoryLink(category)
+    }
+  },
+  watch: {
+    isOpen (newVal, oldVal) {
+      if (newVal === true) {
+        this.closing = false
+      }
     }
   }
 }
@@ -242,6 +268,40 @@ $bg-secondary: color(secondary, $colors-background);
 $color-gainsboro: color(gainsboro);
 $color-matterhorn: color(matterhorn);
 $color-mine-shaft: color(mine-shaft);
+
+ .menu{
+    width: 50px;
+    height: 50px;
+    background: transparent;
+    border: none;
+    float: right;
+    padding: 10px;
+  }
+  .menu-line {
+    width: 100%;
+    height: 2px;
+    background: black;
+    margin: 5px 0px;
+    transition: 0.2s;
+  }
+  .active-menu {
+    width: 100%;
+    height: 2px;
+    background: black;
+    margin: 5px 0px;
+    transition: 0.2s;
+  }
+
+  .active-menu:nth-child(1) {
+    transform: rotate(45deg);
+  }
+  .active-menu:nth-child(2) {
+    display: none;
+  }
+  .active-menu:nth-child(3) {
+    margin-top: -7px;
+    transform: rotate(-45deg);
+  }
 
 .sidebar-menu {
   height: 100vh;
