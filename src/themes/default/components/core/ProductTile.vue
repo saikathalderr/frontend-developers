@@ -57,6 +57,16 @@
         v-if="!product.special_price && parseFloat(product.price_incl_tax) > 0 && !onlyImage"
       >{{ product.price_incl_tax | price(storeView) }}</span>
     </router-link>
+    <div class="h5">
+      <div class="row top-xs m0 pt15 pb40 variants-wrapper">
+        <color-selector
+          v-for="filter in colors"
+          :key="filter.id"
+          :variant="filter"
+          @change.self="changeColor(filter.image)"
+        />
+      </div>
+    </div>
   </div>
 </template>
 
@@ -67,6 +77,7 @@ import config from 'config'
 import ProductImage from './ProductImage'
 import AddToWishlist from 'theme/components/core/blocks/Wishlist/AddToWishlist'
 import AddToCompare from 'theme/components/core/blocks/Compare/AddToCompare'
+import ColorSelector from 'theme/components/core/ColorSelector.vue';
 import { IsOnWishlist } from '@vue-storefront/core/modules/wishlist/components/IsOnWishlist'
 import { IsOnCompare } from '@vue-storefront/core/modules/compare/components/IsOnCompare'
 import { currentStoreView } from '@vue-storefront/core/lib/multistore'
@@ -76,7 +87,8 @@ export default {
   components: {
     ProductImage,
     AddToWishlist,
-    AddToCompare
+    AddToCompare,
+    ColorSelector
   },
   props: {
     labelsActive: {
@@ -88,11 +100,30 @@ export default {
       default: false
     }
   },
+  data: () => ({
+    colors: [],
+    colorPreviewImage: null
+  }),
+  mounted () {
+    if (this.product.configurable_children) {
+      this.product.configurable_children.forEach(child => {
+        let name = child.image.split('-')[1].split('_')[0]
+        let label = name
+        let image = child.image
+        let id = child.color
+        let colorObj = { id, label, image }
+        let hascolor = this.colors.filter(c => c.id === child.color)
+        if (hascolor.length === 0) {
+          this.colors.push(colorObj)
+        }
+      });
+    }
+  },
   computed: {
     thumbnailObj () {
       return {
-        src: this.thumbnail,
-        loading: this.thumbnail
+        src: this.colorPreviewImage || this.thumbnail,
+        loading: this.colorPreviewImage || this.thumbnail
       }
     },
     favoriteIcon () {
@@ -103,6 +134,9 @@ export default {
     }
   },
   methods: {
+    changeColor (url) {
+      this.colorPreviewImage = `https://demo.vuestorefront.io/img/310/300/resize/${url}`
+    },
     onProductPriceUpdate (product) {
       if (product.sku === this.product.sku) {
         Object.assign(this.product, product)
