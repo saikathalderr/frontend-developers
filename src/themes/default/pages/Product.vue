@@ -1,5 +1,8 @@
 <template>
   <div id="product">
+    <MobileAddToCart :get-current-product="getCurrentProduct"
+                     :is-add-to-cart-disabled="isAddToCartDisabled"
+    />
     <section class="bg-cl-secondary px20 product-top-section">
       <div class="container">
         <section class="row m0 between-xs">
@@ -111,7 +114,7 @@
               :check-max-quantity="manageQuantity"
               @error="handleQuantityError"
             />
-            <div class="row m0">
+            <div class="row m0 hidden-sm hidden-xs">
               <add-to-cart
                 :product="getCurrentProduct"
                 :disabled="isAddToCartDisabled"
@@ -229,9 +232,11 @@ import { catalogHooksExecutors } from '@vue-storefront/core/modules/catalog-next
 import ProductPrice from 'theme/components/core/ProductPrice.vue';
 import { doPlatformPricesSync } from '@vue-storefront/core/modules/catalog/helpers';
 import { filterChangedProduct } from '@vue-storefront/core/modules/catalog/events';
+import MobileAddToCart from './MobileAddToCart'
 
 export default {
   components: {
+    MobileAddToCart,
     AddToCart,
     AddToCompare,
     AddToWishlist,
@@ -338,10 +343,15 @@ export default {
       return getAvailableFiltersByProduct(this.getCurrentProduct);
     },
     getSelectedFilters () {
-      return getSelectedFiltersByProduct(
+      const product = getSelectedFiltersByProduct(
         this.getCurrentProduct,
         this.getCurrentProductConfiguration
       );
+      if (!product) {
+        return this.notifyWrongAttributes()
+      } else {
+        return product
+      }
     },
     isSimpleOrConfigurable () {
       return ['simple', 'configurable'].includes(

@@ -1,6 +1,6 @@
 <template>
   <div class="product-quantity">
-    <base-input-number
+    <!-- <base-input-number
       :name="name"
       :value="value"
       :min="1"
@@ -19,21 +19,33 @@
           text: $t('Quantity must be below {quantity}', { quantity: maxQuantity })
         }
       ]"
-    />
+    /> -->
+    <select name="productQuantity" id="productQuantity" v-model="quantity" v-if="!loading && max > 0" @change="onQuantityChange()" style="height: unset">
+      <option v-for="(stock, index) in max" :key="index" :value="stock">
+        {{ stock }}
+      </option>
+    </select>
+    &nbsp;&nbsp;&nbsp;&nbsp;
+    <span v-if="!loading && max > 0">
+      {{ max }} In Stock
+    </span>
     <spinner v-if="loading" />
+    <h3 v-if="!loading && max === 0">
+      Out of stock
+    </h3>
   </div>
 </template>
 
 <script>
 import { minValue, maxValue, numeric, required } from 'vuelidate/lib/validators'
 import { onlineHelper } from '@vue-storefront/core/helpers'
-import BaseInputNumber from 'theme/components/core/blocks/Form/BaseInputNumber'
+// import BaseInputNumber from 'theme/components/core/blocks/Form/BaseInputNumber'
 import Spinner from 'theme/components/core/Spinner'
 
 export default {
   components: {
-    Spinner,
-    BaseInputNumber
+    Spinner
+    // BaseInputNumber
   },
   props: {
     value: {
@@ -60,6 +72,11 @@ export default {
       type: Boolean,
       default: false
     }
+  },
+  data: function () {
+    return {
+      quantity: this.value
+    };
   },
   computed: {
     isOnline (value) {
@@ -98,6 +115,13 @@ export default {
   watch: {
     '$v.$invalid' (error) {
       this.$emit('error', error)
+    }
+  },
+  methods: {
+    onQuantityChange () {
+      // console.log('yo', this.quantity);
+      this.$emit('input', this.quantity)
+      this.$v.$touch()
     }
   }
 }

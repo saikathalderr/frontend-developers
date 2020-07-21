@@ -3,6 +3,7 @@
     @click.native="addToCart(product)"
     :disabled="isProductDisabled"
     data-testid="addToCart"
+    class="addToCart"
   >
     <!-- changed the text of the Add to Cart button to Added -->
     <span v-if="!isAddingToCart && !isAdded">{{ $t('Add to cart') }}</span>
@@ -11,6 +12,15 @@
     <Spinner v-if="isAddingToCart" />
   </button-full>
 </template>
+
+<style lang="scss" scoped>
+.addToCart{
+  @media (max-width: 767px) {
+      height: 48px !important;
+      padding: 0 !important;
+  }
+}
+</style>
 
 <script>
 import { formatProductMessages } from '@vue-storefront/core/filters/product-messages';
